@@ -2,8 +2,8 @@
 *	tweets : tableau des tweets a filtrer
 *	criterias : list of all criteria to match
 		criteriaName : name of the tweet attribute to look at
-		value : value to check
-		operand : OPTIONAL : check to perform between the tweet's attribute and the value
+		value : value to check, must be numbers if checking number, string if checking strings, etc
+		operand : OPTIONAL : check to perform between the tweet's attribute and the value. Default equals
 		fncOperand : OPTIONAL : function to perform between the tweet's attribute and the value
 		one of operand or fncOperand  must be given
 */
@@ -25,37 +25,37 @@ function getFunctionFor(operand){
 		case "=" :
 		case "equ" :
 		case "equals" :
-			fnc = (tweet, criteriaName, value) => (tweet[criteriaName] === value);
+			fnc = (tweet, criteriaName, value) => (isNaN(tweet[criteriaName]) ? (tweet[criteriaName] === value) : (parseFloat(tweet[criteriaName]) === value));
 			break;
 		
 		case "!=" : 
 		case "neq" : 
 		case "notEquals" : 
-			fnc = (tweet, criteriaName, value) => (tweet[criteriaName] !== value);
+			fnc = (tweet, criteriaName, value) => (isNaN(tweet[criteriaName]) ? (tweet[criteriaName] !== value) : (parseFloat(tweet[criteriaName]) !== value));
 			break;
 			
 		case ">" :
 		case "gtr" : 
 		case "greaterThan" : 
-			fnc = (tweet, criteriaName, value) => (tweet[criteriaName] > value);
+			fnc = (tweet, criteriaName, value) => (isNaN(tweet[criteriaName]) ? (tweet[criteriaName] > value) : (parseFloat(tweet[criteriaName]) > value));
 			break;
 			
 		case ">=" :
 		case "geq" : 
 		case "greaterThanOrEquals" : 
-			fnc = (tweet, criteriaName, value) => (tweet[criteriaName] >= value);
+			fnc = (tweet, criteriaName, value) => (isNaN(tweet[criteriaName]) ? (tweet[criteriaName] >= value) : (parseFloat(tweet[criteriaName]) >= value));
 			break;
 			
 		case "<" :
 		case "lss" :
 		case "lessThan" : 
-			fnc = (tweet, criteriaName, value) => (tweet[criteriaName] < value);
+			fnc = (tweet, criteriaName, value) => (isNaN(tweet[criteriaName]) ? (tweet[criteriaName] < value) : (parseFloat(tweet[criteriaName]) < value));
 			break;
 			
 		case "<" :
 		case "leq" :
 		case "lessThanOrEquals" : 
-			fnc = (tweet, criteriaName, value) => (tweet[criteriaName] <= value);
+			fnc = (tweet, criteriaName, value) => (isNaN(tweet[criteriaName]) ? (tweet[criteriaName] <= value) : (parseFloat(tweet[criteriaName]) <= value));
 			break;
 			
 		case "oneOf" : 
@@ -63,11 +63,11 @@ function getFunctionFor(operand){
 			break;
 		
 		case "between" :
-			fnc = (tweet, criteriaName, values) => (values[0] <= tweet[criteriaName] && values[1] >= tweet[criteriaName] );
+			fnc = (tweet, criteriaName, values) => (isNaN(tweet[criteriaName]) ? (values[0] <= tweet[criteriaName] && values[1] >= tweet[criteriaName] ) : (values[0] <= parseFloat(tweet[criteriaName]) && values[1] >= parseFloat(tweet[criteriaName]) ) );
 			break;
 			
 		case "notBetween" :
-			fnc = (tweet, criteriaName, values) => (values[0] > tweet[criteriaName] && values[1] < tweet[criteriaName] );
+			fnc = (tweet, criteriaName, values) => (isNaN(tweet[criteriaName]) ? (values[0] > tweet[criteriaName] && values[1] < tweet[criteriaName] ) : (values[0] > parseFloat(tweet[criteriaName]) && values[1] < parseFloat(tweet[criteriaName]) ) );
 			break;
 		
 		case "dateEquals":
