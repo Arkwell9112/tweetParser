@@ -3,7 +3,7 @@ function searchByCriteria({ tweets, criteriaName, value }){
 }
 
 function lookCriteriaInTweet(tweet, criteria, value){
-	let isCriteriaAndValueInTweet = (tweet[criteria] === value)
+	return (tweet[criteria] === value)
 }
 
 exports.searchByCriteria = searchByCriteria;
