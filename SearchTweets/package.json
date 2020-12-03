@@ -1,0 +1,9 @@
+{
+  "name": "SearchTweets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "SearchTweets.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
