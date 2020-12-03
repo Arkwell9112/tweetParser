@@ -1,6 +1,19 @@
-function searchByCriteria({ tweets, criteriaName, value, operand, fncOperand }){
-	let isFillingCriteriaFnc = fncOperand ? fncOperand : getFunctionFor(operand);
-	return tweets.filter(tweet => isFillingCriteriaFnc(tweet, criteriaName, value));
+/**
+*	tweets : tableau des tweets a filtrer
+*	criterias : list of all criteria to match
+		criteriaName : name of the tweet attribute to look at
+		value : value to check
+		operand : OPTIONAL : check to perform between the tweet's attribute and the value
+		fncOperand : OPTIONAL : function to perform between the tweet's attribute and the value
+		one of operand or fncOperand  must be given
+*/
+function searchByCriteria(tweets, criterias){
+	let matchingCriterias = tweets;
+	criterias.forEach(criteria => {
+		let isFillingCriteriaFnc = criteria.fncOperand ? criteria.fncOperand : getFunctionFor(criteria.operand);
+		tweets = tweets.filter(tweet => isFillingCriteriaFnc(tweet, criteria.criteriaName, criteria.value));
+	})
+	return tweets;
 }
 
 function getFunctionFor(operand){
