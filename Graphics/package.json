@@ -1,0 +1,13 @@
+{
+  "name": "Graphics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Graphics.js",
+  "dependencies": {
+    "vega": "^5.17.0",
+    "vega-lite": "^4.17.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
