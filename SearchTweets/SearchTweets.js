@@ -11,9 +11,9 @@ function searchByCriteria(tweets, criterias){
 	let matchingCriterias = tweets;
 	criterias.forEach(criteria => {
 		let isFillingCriteriaFnc = criteria.fncOperand ? criteria.fncOperand : getFunctionFor(criteria.operand);
-		tweets = tweets.filter(tweet => isFillingCriteriaFnc(tweet, criteria.criteriaName, criteria.value));
+		matchingCriterias = matchingCriterias.filter(tweet => isFillingCriteriaFnc(tweet, criteria.criteriaName, criteria.value));
 	})
-	return tweets;
+	return matchingCriterias;
 }
 
 function getFunctionFor(operand){
