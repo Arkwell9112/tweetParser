@@ -41,13 +41,21 @@ function searchTweetsWrapper(commandParts) {
 }
 
 
-function listGraphWrapper(){
-    graphics.listGraph(data,commandParts[0],commandParts[1]);
+function listGraphWrapper(commandParts){
+    graphics.listGraph(data,commandParts[0],commandParts[1],commandParts[2]);
     return "managed";
 }
 
-function exportTweetWrapper(){
-    if (data === null) {
+function exportTweetWrapper(commandParts){
+    if(dataType==0){
+        exportTweet.exportTweetABNF(data,commandParts[0]);
+        return "managed";
+    }else{
+        console.log("Datatype not a TweetList")
+        return "managed";
+    }
+
+    /*if (data === null) {
         console.log("Data is null")
         return "managed";
     } else if (data.hasOwnProperty("length")) {
@@ -56,14 +64,14 @@ function exportTweetWrapper(){
             return "managed";
         } else {
             if (data[0].hasOwnProperty("hashtags")) {
-                exportTweet.exportTweetABNF(data);
+                exportTweet.exportTweetABNF(data,commandParts[0]);
                 return "managed";
             } else {
                 console.log("Data is not a TweetList");
                 return "managed";
             }
         }
-    }
+    }*/
 }
 
 commandParser.addCommand("import", 1, "Import data in the application from CSV TweetList.", "import <String> path", parseGL02TweetsWrapper);
@@ -71,8 +79,8 @@ commandParser.addCommand("exit", 0, "Exit the application.", "exit", exitWrapper
 commandParser.addCommand("print", 0, "Print current data.", "print", printWrapper);
 commandParser.addCommand("relhashtags", 2, "Get related hashtags from hashtag depending on level.", "relhashtags <String> hashtag <Integer> level", getRelatedHashtagsWrapper);
 commandParser.addCommand("search", 1, "Search tweets matching given criterias.", "search [{<String> criteriaName, <String/Integer/Float> value, <String> operand, <String, function js code> fncOperand }]", searchTweetsWrapper);
-commandParser.addCommand("listGraph",2,"Export graphic from author list or tweet list.\nFirst parameter can be : created_at, user_screen_name, user_name, hashtags\nSecond can be : count, retweet_count","listGraph <String> xValue <String> yValue",listGraphWrapper);
-commandParser.addCommand("exportTweet",0,"Export list of tweet from a tweet list","exportTweet",exportTweetWrapper);
+commandParser.addCommand("listGraph",3,"Export graphic from author list or tweet list.\nFirst parameter can be : created_at, user_screen_name, user_name, hashtags\nSecond can be : count, retweet_count\nThird is filename","listGraph <String> xValue <String> yValue <String> name",listGraphWrapper);
+commandParser.addCommand("exportTweet",1,"Export list of tweet from a tweet list, enter a file name as argument","exportTweet <String> name",exportTweetWrapper);
 
 let data = null;
 let dataType = -1;

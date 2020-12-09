@@ -6,7 +6,7 @@
 
 var fs = require('fs');
 
-function exportTweetABNF (tweetList){
+function exportTweetABNF (tweetList,fileName){
     let data="";
     for (let i =0; i < tweetList.length ; i++){
         data += "[ID: "+tweetList[i].id+"]\r\n" ;
@@ -19,7 +19,7 @@ function exportTweetABNF (tweetList){
         data+="Hashtags: " + tweetList[i].hashtags + ";\r\n\r\n"
 
     }
-    fs.writeFile('./ListDeTweet.txt', data, (err) => {
+    fs.writeFile('./'+fileName+'.txt', data, (err) => {
         if (err) throw err;
     });
 }

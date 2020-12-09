@@ -203,10 +203,10 @@ function authSpec(list,hashtag){
 
 }
 
-function listGraph(list,x,y){
+function listGraph(list,x,y,fileName){
 	try{
 		const spec = verifyArgs(list,x,y);
-		toSVGChart(spec,"tweets.svg");
+		toSVGChart(spec,fileName+".svg");
 	}catch (e) {
 		console.error(e);
 	}
