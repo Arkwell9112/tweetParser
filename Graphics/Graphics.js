@@ -24,7 +24,7 @@ function tweetLocationBarChart(tweets, maxAmmountOf){
 	//find the <maxAmmountOf> best locations
 	for(const locName in countOfTweetsByLoc) {
 		const loc = countOfTweetsByLoc[locName];
-		if(bestLocations.length<maxAmmountOf || maxAmmountOf === undefined || maxAmmountOf < 0){
+		if(bestLocations.length<maxAmmountOf || !maxAmmountOf || maxAmmountOf < 0){
 			bestLocations.push(loc);
 		} else {
 			let i=0, worstLocIndex=0;
@@ -74,16 +74,19 @@ function tweetCountMap(tweets){
 			if(cityInfo){
 				const cityInfoAsArray = cityInfo.split(/\s/g)
 				const countryCode = cityInfoAsArray[cityInfoAsArray.indexOf(cityInfoAsArray.find(ci => ci.match("PPL")))+1];
+				const lat = cityInfoAsArray[cityInfoAsArray.indexOf(cityInfoAsArray.find(ci => ci.match("PPL")))-3];
+				const lng = cityInfoAsArray[cityInfoAsArray.indexOf(cityInfoAsArray.find(ci => ci.match("PPL")))-2];
 				t.countryCode = countryCode;
+				t.latlng = {lat:parseFloat(lat), lng:parseFloat(lng)};
 			}
 			return t;
 		});
 		
-		tweetsWithKnownLocation = tweetsWithKnownLocation.filter(t => (t.countryCode));
+		tweetsWithKnownLocation = tweetsWithKnownLocation.filter(t => (t.countryCode && t.latlng.lat && t.latlng.lng));
 		
 		const locationWithTweetCounts = tweetsWithKnownLocation.reduce((acc, t) => {
 			if(!acc[t.countryCode])
-				acc[t.countryCode] = {id : t.countryCode, count:1};
+				acc[t.countryCode] = {id : t.countryCode, count:1, ...t.latlng};
 				
 			acc[t.countryCode].count += 1;
 			return acc;
@@ -101,10 +104,7 @@ function tweetCountMap(tweets){
 			"width": 900,
 			"height": 500,
 			"autosize": "none",
-			"mark": {
-				"type": "geoshape",
-				"value": "mercator",
-			},
+			
 			"data" : { 
 				"values": worldData,
 				"format": {
@@ -118,16 +118,28 @@ function tweetCountMap(tweets){
 				"from": {
 					"data": {"values":locationWithTweetCountsAsArray},
 					"key": "id",
-					"fields": ["count"]
+					"fields": ["count", "lat", "lng"]
 				}
 			}],
 			
-			"encoding": {
-				"color": {
-					"field": "count",
-					"type": "quantitative"
+			"projection": {"type": "mercator"},
+  
+			"layer" : [
+				{
+					"mark": {
+						"type": "geoshape"
+					}
+				}, {
+					"mark": "text",
+					"encoding": {
+						"text": {"field": "count", "type": "nominal"},
+						"longitude": {"field": "lng", "type": "quantitative"},
+						"latitude": {"field": "lat", "type": "quantitative"},
+						"size": {"value": 7},
+						"opacity": {"value": 1}
+					}
 				}
-			}
+			]
 		}
 		
 		toSVGChart(vlSpec, "tweetCountMap.svg")
