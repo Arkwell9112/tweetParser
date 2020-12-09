@@ -69,3 +69,4 @@ function parseEscapableFields(data, fieldChar, escapeChar) {
 }
 
 exports.parseGL02Tweets = parseGL02Tweets;
+exports.parseEscapableFields = parseEscapableFields;
