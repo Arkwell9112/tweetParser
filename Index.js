@@ -29,15 +29,15 @@ function parseGL02TweetsWrapper(commandParts) {
     return cSVReader.parseGL02Tweets(commandParts[0]);
 }
 
-function searchTweetsWrapper(commandParts){
-	const criterias = JSON.parse( commandParts[0] );
-	console.log(criterias);
-	criterias.map(c => {
-		c.value = isNaN(c.value) ? c : parseFloat(c.value);
-		if(c.fncOperand)
-			c.fncOperand = new Function("tweet", "criteriaName", "value", c.fncOperand);
-	});
-	return searchTweets.searchByCriteria(data, criterias);
+function searchTweetsWrapper(commandParts) {
+    const criterias = JSON.parse(commandParts[0]);
+    console.log(criterias);
+    criterias.map(c => {
+        c.value = isNaN(c.value) ? c : parseFloat(c.value);
+        if (c.fncOperand)
+            c.fncOperand = new Function("tweet", "criteriaName", "value", c.fncOperand);
+    });
+    return searchTweets.searchByCriteria(data, criterias);
 }
 
 
@@ -70,7 +70,7 @@ commandParser.addCommand("import", 1, "Import data in the application from CSV T
 commandParser.addCommand("exit", 0, "Exit the application.", "exit", exitWrapper);
 commandParser.addCommand("print", 0, "Print current data.", "print", printWrapper);
 commandParser.addCommand("relhashtags", 2, "Get related hashtags from hashtag depending on level.", "relhashtags <String> hashtag <Integer> level", getRelatedHashtagsWrapper);
-commandParser.addCommand("search", 1, "Search tweets matching given criterias", "search [{<String> criteriaName, <String/Integer/Float> value, <String> operand, <String, function js code> fncOperand }]", searchTweetsWrapper);
+commandParser.addCommand("search", 1, "Search tweets matching given criterias.", "search [{<String> criteriaName, <String/Integer/Float> value, <String> operand, <String, function js code> fncOperand }]", searchTweetsWrapper);
 commandParser.addCommand("listGraph",2,"Export graphic from author list or tweet list.\nFirst parameter can be : created_at, user_screen_name, user_name, hashtags\nSecond can be : count, retweet_count","listGraph <String> xValue <String> yValue",listGraphWrapper);
 commandParser.addCommand("exportTweet",0,"Export list of tweet from a tweet list","exportTweet",exportTweetWrapper);
 
