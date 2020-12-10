@@ -1,18 +1,70 @@
-let readline = require("readline").createInterface({
+const readline = require("readline").createInterface({
     input: process.stdin,
     output: process.stdout
 });
-let commandParser = require("./CommandParser/CommandParser");
-let cSVReader = require("./CSVReader/CSVReader");
-let topTweets = require("./TopTweets/TopTweets");
-let searchTweets = require("./SearchTweets/SearchTweets");
+const commandParser = require("./CommandParser/CommandParser");
+const cSVReader = require("./CSVReader/CSVReader");
+const topTweets = require("./TopTweets/TopTweets");
+const searchTweets = require("./SearchTweets/SearchTweets");
 const graphics = require('./Graphics/Graphics');
 const exportTweet = require('./ABNF/ABNFTweet');
+const jSONWriter = require("./JSONWriter/JSONWriter");
+
+const notatl = "Data Type not a TweetList !";
+
+function writeAuthorListWrapper(commandParts) {
+    if (dataType === 1) {
+        jSONWriter.writeAuthorList(commandParts[0], data);
+    } else {
+        console.log("Data Type not a Author List !");
+    }
+    return "managed";
+}
+
+function writeJSONObjectWrapper(commandParts) {
+    if (dataType === 2) {
+        jSONWriter.writeJSONObject(commandParts[0], data);
+    } else {
+        console.log("Data Type not a HashtagList !");
+    }
+    return "managed";
+}
+
+function getTop10MRAFH(commandParts) {
+    if (dataType === 0) {
+        return topTweets.getTop10MostRetweetedAuthorsFromHashtag(data, commandParts[0]);
+    } else {
+        console.log(notatl);
+        return "managed";
+    }
+}
+
+function getTop10MRFHWrapper(commandParts) {
+    if (dataType === 0) {
+        return topTweets.getTop10MostRetweetedFromHashtag(data, commandParts[0]);
+    } else {
+        console.log(notatl);
+        return "managed";
+    }
+}
+
+function getTweetCountWrapper(commandParts) {
+    if (dataType === 0) {
+        return topTweets.getTweetCountFromHashtagInTimeInterval(data, commandParts[0], commandParts[1], commandParts[2]);
+    } else {
+        console.log(notatl);
+    }
+}
 
 function getRelatedHashtagsWrapper(commandParts) {
-    let hashtagList = Array();
-    hashtagList.push(commandParts[0]);
-    return topTweets.getRelatedHashtagsFromHashtag(data, hashtagList, parseInt(commandParts[1], 10));
+    if (dataType === 0) {
+        let hashtagList = Array();
+        hashtagList.push(commandParts[0]);
+        return topTweets.getRelatedHashtagsFromHashtag(data, hashtagList, parseInt(commandParts[1], 10));
+    } else {
+        console.log(notatl);
+        return "managed";
+    }
 }
 
 function printWrapper(commandParts) {
@@ -30,48 +82,34 @@ function parseGL02TweetsWrapper(commandParts) {
 }
 
 function searchTweetsWrapper(commandParts) {
-    const criterias = JSON.parse(commandParts[0]);
-    console.log(criterias);
-    criterias.map(c => {
-        c.value = isNaN(c.value) ? c : parseFloat(c.value);
-        if (c.fncOperand)
-            c.fncOperand = new Function("tweet", "criteriaName", "value", c.fncOperand);
-    });
-    return searchTweets.searchByCriteria(data, criterias);
+    if (dataType === 0) {
+        const criterias = JSON.parse(commandParts[0]);
+        console.log(criterias);
+        criterias.map(c => {
+            c.value = isNaN(c.value) ? c : parseFloat(c.value);
+            if (c.fncOperand)
+                c.fncOperand = new Function("tweet", "criteriaName", "value", c.fncOperand);
+        });
+        return searchTweets.searchByCriteria(data, criterias);
+    } else {
+        console.log(notatl);
+        return "managed";
+    }
 }
 
 
-function listGraphWrapper(commandParts){
-    graphics.listGraph(data,commandParts[0],commandParts[1],commandParts[2]);
+function listGraphWrapper(commandParts) {
+    graphics.listGraph(data, commandParts[0], commandParts[1], commandParts[2]);
     return "managed";
 }
 
-function exportTweetWrapper(commandParts){
-    if(dataType==0){
-        exportTweet.exportTweetABNF(data,commandParts[0]);
-        return "managed";
-    }else{
-        console.log("Datatype not a TweetList")
-        return "managed";
+function exportTweetWrapper(commandParts) {
+    if (dataType === 0) {
+        exportTweet.exportTweetABNF(data, commandParts[0]);
+    } else {
+        console.log(notatl);
     }
-
-    /*if (data === null) {
-        console.log("Data is null")
-        return "managed";
-    } else if (data.hasOwnProperty("length")) {
-        if (data.length === 0) {
-            console.log("Data is null")
-            return "managed";
-        } else {
-            if (data[0].hasOwnProperty("hashtags")) {
-                exportTweet.exportTweetABNF(data,commandParts[0]);
-                return "managed";
-            } else {
-                console.log("Data is not a TweetList");
-                return "managed";
-            }
-        }
-    }*/
+    return "managed";
 }
 
 commandParser.addCommand("import", 1, "Import data in the application from CSV TweetList.", "import <String> path", parseGL02TweetsWrapper);
@@ -79,8 +117,13 @@ commandParser.addCommand("exit", 0, "Exit the application.", "exit", exitWrapper
 commandParser.addCommand("print", 0, "Print current data.", "print", printWrapper);
 commandParser.addCommand("relhashtags", 2, "Get related hashtags from hashtag depending on level.", "relhashtags <String> hashtag <Integer> level", getRelatedHashtagsWrapper);
 commandParser.addCommand("search", 1, "Search tweets matching given criterias.", "search [{<String> criteriaName, <String/Integer/Float> value, <String> operand, <String, function js code> fncOperand }]", searchTweetsWrapper);
-commandParser.addCommand("listGraph",3,"Export graphic from author list or tweet list.\nFirst parameter can be : created_at, user_screen_name, user_name, hashtags\nSecond can be : count, retweet_count\nThird is filename","listGraph <String> xValue <String> yValue <String> name",listGraphWrapper);
-commandParser.addCommand("exportTweet",1,"Export list of tweet from a tweet list, enter a file name as argument","exportTweet <String> name",exportTweetWrapper);
+commandParser.addCommand("listGraph", 3, "Export graphic from author list or tweet list.\nFirst parameter can be : created_at, user_screen_name, user_name, hashtags\nSecond can be : count, retweet_count\nThird is filename", "listGraph <String> xValue <String> yValue <String> name", listGraphWrapper);
+commandParser.addCommand("exportTweet", 1, "Export list of tweet from a tweet list, enter a file name as argument", "exportTweet <String> name", exportTweetWrapper);
+commandParser.addCommand("tweetcount", 3, "Get count of tweets containing a hashtag in a time interval.", "tweetcount <String> hashtag <String> beginDate <String> endDate", getTweetCountWrapper);
+commandParser.addCommand("top10mrfh", 1, "Get top 10 most retweeted tweets in hashtag.", "top10mrfh <String> hashtag", getTop10MRFHWrapper);
+commandParser.addCommand("top10mrafh", 1, "Get top 10 most retweeted authors in hashtag.", "top10mrafh <String> hashtag", getTop10MRAFH);
+commandParser.addCommand("exporthashlist", 1, "Export the current HashtagList to the specified path.", "exporthashlist <String> path", writeJSONObjectWrapper);
+commandParser.addCommand("exportauthlist", 1, "Export the current AuthorList to the specified path.", "exportauthlist <String> path", writeAuthorListWrapper);
 
 let data = null;
 let dataType = -1;

@@ -21,14 +21,17 @@ function unescapeString(data, escapeChar) {
 function executeCommand(command) {
     let cSVReader = require("./../CSVReader/CSVReader");
     let commandParts = cSVReader.parseEscapableFields(command, ' ', '"');
-    if (commandParts[0] === "man" || commandParts[0] === "use") {
+    if (commandParts[0] === "man" || commandParts[0] === "use" || commandParts[0] === "help") {
+        if (commandParts[0] === "help") {
+            for (let j = 0; j < commands.length; j++) {
+                console.log(commands[j].name);
+                console.log(commands[j].use);
+            }
+            return "managed";
+        }
         for (let i = 0; i < commands.length; i++) {
             if (commands[i].name === commandParts[1]) {
-                if (commandParts[0] === "man") {
-                    console.log(commands[i].man);
-                } else {
-                    console.log(commands[i].use);
-                }
+                console.log(commands[i][commandParts[0]]);
                 return "managed";
             }
         }
