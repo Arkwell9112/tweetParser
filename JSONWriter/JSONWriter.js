@@ -1,7 +1,13 @@
 function writeJSONObject(path, object) {
     let fs = require("fs");
     let data = JSON.stringify(object);
-    fs.writeFileSync(path, data);
+    try{
+        fs.writeFileSync(path, data);
+    }
+    catch (e){
+        console.log("Error of path");
+        console.log("Use a correct path with a filename and the extension, example : ./file.txt");
+    }
 }
 
 function writeAuthorList(path, authorList) {

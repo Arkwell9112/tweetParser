@@ -99,7 +99,12 @@ function searchTweetsWrapper(commandParts) {
 
 
 function listGraphWrapper(commandParts) {
-    graphics.listGraph(data, commandParts[0], commandParts[1], commandParts[2]);
+    if(dataType == 0 ||dataType==1){
+        graphics.listGraph(data, commandParts[0], commandParts[1], commandParts[2]);
+    }
+    else{
+        console.log("Data not a TweetList or a AuthorList");
+    }
     return "managed";
 }
 
@@ -117,7 +122,7 @@ commandParser.addCommand("exit", 0, "Exit the application.", "exit", exitWrapper
 commandParser.addCommand("print", 0, "Print current data.", "print", printWrapper);
 commandParser.addCommand("relhashtags", 2, "Get related hashtags from hashtag depending on level.", "relhashtags <String> hashtag <Integer> level", getRelatedHashtagsWrapper);
 commandParser.addCommand("search", 1, "Search tweets matching given criterias.", "search [{<String> criteriaName, <String/Integer/Float> value, <String> operand, <String, function js code> fncOperand }]", searchTweetsWrapper);
-commandParser.addCommand("listGraph", 3, "Export graphic from author list or tweet list.\nFirst parameter can be : created_at, user_screen_name, user_name, hashtags\nSecond can be : count, retweet_count\nThird is filename", "listGraph <String> xValue <String> yValue <String> name", listGraphWrapper);
+commandParser.addCommand("listgraph", 3, "Export graphic from author list or tweet list.\nFirst parameter can be : created_at, user_screen_name, user_name, hashtags\nSecond can be : count, retweet_count\nThird is filename", "listGraph <String> xValue <String> yValue <String> name", listGraphWrapper);
 commandParser.addCommand("exportTweet", 1, "Export list of tweet from a tweet list, enter a file name as argument", "exportTweet <String> name", exportTweetWrapper);
 commandParser.addCommand("tweetcount", 3, "Get count of tweets containing a hashtag in a time interval.", "tweetcount <String> hashtag <String> beginDate <String> endDate", getTweetCountWrapper);
 commandParser.addCommand("top10mrfh", 1, "Get top 10 most retweeted tweets in hashtag.", "top10mrfh <String> hashtag", getTop10MRFHWrapper);
